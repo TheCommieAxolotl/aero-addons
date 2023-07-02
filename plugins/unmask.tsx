@@ -68,7 +68,7 @@ export default definePlugin({
             find: ".withMentionPrefix,",
             replacement: {
                 match: /children:(.{1,2}\+.{1,2})};/,
-                replace: "children: ($1 === e.message.author.username) ? $1 : $self.make(($1), e.message.author.username)};",
+                replace: "children: (($1).toLowerCase() === e.message.author.username.toLowerCase()) ? $1 : $self.make(($1), e.message.author.username)};",
             },
         },
     ],
