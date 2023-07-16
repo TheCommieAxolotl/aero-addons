@@ -19,7 +19,7 @@
 // @ts-ignore
 import React from "react";
 
-import { definePlugin, pluginSettings, SettingsItemTypes } from "aero/plugin";
+import { definePlugin, pluginSettings, SettingsItemType } from "aero/plugin";
 import { injectStyles } from "aero/dom";
 
 const settings = pluginSettings("unmask");
@@ -50,7 +50,7 @@ export default definePlugin({
             id: "at",
             name: "@ instead of parenthesis",
             description: "Use @ instead of parenthesis to show the username.",
-            type: SettingsItemTypes.BOOLEAN,
+            type: SettingsItemType.BOOLEAN,
         },
     ],
     self: {
