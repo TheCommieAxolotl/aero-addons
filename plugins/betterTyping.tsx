@@ -102,7 +102,7 @@ export default definePlugin({
             return p.map((e: any) => {
                 if (e.type === "strong") {
                     const t = typing.find(({ user, member }) => {
-                        return user.globalName === e.props.children[0] || member.nick === e.props.children[0] || user.username === e.props.children[0];
+                        return user.globalName === e.props.children[0] || member?.nick === e.props.children[0] || user.username === e.props.children[0];
                     });
 
                     if (!t) return e;
@@ -111,7 +111,7 @@ export default definePlugin({
                         <strong
                             className="clickableTyping-user"
                             style={{
-                                color: settings["showRoleColors"] ? t.member.colorString : undefined,
+                                color: settings["showRoleColors"] ? t.member?.colorString : undefined,
                             }}
                             onClick={() => {
                                 openUserProfile(t.id);
