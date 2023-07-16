@@ -36,26 +36,27 @@ type Author<T = string> = {
     id?: T;
 };
 
-declare enum SettingsItemTypes {
+declare enum SettingsItemType {
     BOOLEAN = "boolean",
     NUMBER = "number",
     STRING = "string",
 }
 
-type SettingsOption = {
+type SettingsOption<T extends SettingsItemType> = {
     id: string;
     name: string;
     description: string;
-    type: SettingsItemTypes;
+    initialValue?: T extends SettingsItemType.BOOLEAN ? boolean : T extends SettingsItemType.NUMBER ? number : T extends SettingsItemType.STRING ? string : never;
+    type: T;
 };
 
-type APlugin = {
+type APlugin<T extends SettingsItemType> = {
     id: string;
     name: string;
     description: string;
     author: Author | Author[];
     dependencies?: string[];
-    settings?: SettingsOption[];
+    settings?: SettingsOption<T>[];
     self?: Record<string, unknown>;
     patches?: Patch[];
     start?(): void;
@@ -63,9 +64,9 @@ type APlugin = {
     color?: string;
 };
 
-type AnyPlugin = APlugin;
+type AnyPlugin<T extends SettingsItemType> = APlugin<T>;
 
-type AeroPlugin = APlugin;
+type AeroPlugin<T extends SettingsItemType> = APlugin<T>;
 
 type Theme = {
     id: string;
@@ -78,9 +79,9 @@ type Theme = {
 };
 
 declare module "aero/plugin" {
-    function definePlugin(plugin: AeroPlugin): AeroPlugin;
+    function definePlugin<T extends SettingsItemType>(plugin: AeroPlugin<T>): AeroPlugin<T>;
     function pluginSettings(pluginID: string): ProxyHandler<Record<string, unknown>>;
-    enum SettingsItemTypes {
+    enum SettingsItemType {
         BOOLEAN = "boolean",
         NUMBER = "number",
         STRING = "string",
@@ -93,6 +94,8 @@ declare module "aero/theme" {
 
 declare module "aero/dom" {
     function injectStyles(id: string, css: string): void;
+    function removeStyles(id: string): void;
+    function h<T extends keyof HTMLElementTagNameMap>(type: T, props?: Partial<{ [key in keyof HTMLElementTagNameMap[T]]: unknown }>, children?: HTMLElement): HTMLElementTagNameMap[T];
 }
 
 declare module "aero/webpack" {
@@ -105,11 +108,16 @@ declare module "aero/webpack" {
         Dispatcher: any;
     };
     function getModule(filter: string | string[] | ((module: any) => boolean)): any;
+    function getByDisplayName(name: string): any;
+    function getByStore(name: string): any;
+    function getByMangled(filter: (ele: unknown) => boolean): any;
+    function getByKeys(...keys: string[]): any;
+    function getByStrings(...strings: string[]): any;
 }
 
 declare module "aero/ui" {
     export var Icons: {
-        [key in "External" | "Folder" | "Check" | "Cross" | "Cloud" | "Copy" | "Gear" | "Plus" | "Book" | "Dev"]: any;
+        [key in "Eye" | "External" | "Folder" | "Check" | "Cross" | "Cloud" | "Copy" | "Gear" | "Plus" | "Book" | "Dev"]: any;
     };
 
     export var ErrorBoundary: any;
@@ -120,4 +128,30 @@ declare module "aero/ui" {
     export var Button: any;
     export var Switch: any;
     export var Alert: any;
+}
+
+declare module "aero/badges" {
+    export type PartialUser = {
+        bot: boolean;
+        id: string;
+        username: string;
+        globalName?: string;
+        discriminator: string;
+    };
+    export type Badge = {
+        predicate?: (user: PartialUser) => boolean;
+        tooltipText?: string;
+        onClick?: (event: MouseEvent, user: PartialUser) => void;
+        /**
+         * Component to render on the user's profile.
+         */
+        component?: (props: { user: PartialUser; html: any }) => JSX.Element;
+        /**
+         * URL to the image to render on the user's profile.
+         */
+        url?: string;
+    };
+
+    function removeProfileBadge(badge: Badge): void;
+    function addProfileBadge(badge: Badge): void;
 }

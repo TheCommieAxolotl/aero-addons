@@ -19,7 +19,7 @@
 import { WebpackInstance } from "discord-types/other";
 import React from "react";
 
-declare class PatcherContructor {
+declare class PatcherConstructor {
     before: (mod: { [x: PropertyKey]: () => unknown }, method: PropertyKey, callback: (args: any) => void) => void;
     instead: (mod: { [x: PropertyKey]: () => unknown }, method: PropertyKey, callback: (args: any, original: any) => void) => void;
     after: (mod: { [x: PropertyKey]: () => unknown }, method: PropertyKey, callback: (args: any, ret: any) => void) => void;
@@ -28,6 +28,7 @@ declare class PatcherContructor {
 
 declare global {
     interface Window {
+        DiscordNative: any;
         aero: {
             settings: { [key: string]: any };
             plugins: { [key: string]: any };
@@ -64,7 +65,7 @@ declare global {
                 injectStyles: (id: string, css: string) => void;
                 removeStyles: (id: string) => void;
             };
-            patcher: PatcherContructor;
+            patcher: PatcherConstructor;
             components: {
                 Icons: {
                     [key in "External" | "Folder" | "Check" | "Cross" | "Cloud" | "Copy" | "Gear" | "Plus" | "Book" | "Dev"]: React.FC;
