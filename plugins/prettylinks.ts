@@ -29,11 +29,12 @@ export default definePlugin({
     },
     patches: [
         {
-            find: '"//").concat(location.host)',
+            find: ".concat(location.host)",
             replacement: {
                 match: ".concat(location.host)",
                 replace: ".concat('discord.com')",
             },
+            all: true,
         },
     ],
 });
